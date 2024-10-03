@@ -1,6 +1,8 @@
 import express from "express";
 const app = express();
 
+app.use(express.json());
+
 let persons = [
   {
     id: "1",
@@ -51,6 +53,32 @@ app.delete("/api/persons/:id", (req, res) => {
   persons = persons.filter((p) => p.id !== id);
 
   res.status(204).end();
+});
+
+app.post("/api/persons", (req, res) => {
+  const body = req.body;
+
+  if (!body.name) {
+    return res.status(400).json({
+      error: "content missing",
+    });
+  }
+
+  const querryPerson = persons.find((p) => p.name === body.name);
+  if (querryPerson) {
+    return res.status(409).json({
+      error: "name must be unique",
+    });
+  }
+
+  const person = {
+    id: String(Math.floor(Math.random() * (4294967296 - 1) + 1)),
+    name: body.name,
+    number: body.number,
+  };
+
+  persons = persons.concat(person);
+  res.json(persons);
 });
 
 const PORT = 3001;

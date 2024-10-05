@@ -1,18 +1,15 @@
 import express from "express";
 import morgan from "morgan";
+import cors from "cors";
 
 const app = express();
 
-const unknownEndpoint = (req, res) => {
-  res.status(404).send({ error: "unknown endpoint" });
-};
-
 app.use(express.json());
+app.use(cors());
 
 morgan.token("post-body", (req, resp) => {
   return JSON.stringify(req.body);
 });
-
 app.use(
   morgan(
     ":method :url :status :res[content-length] - :response-time ms :post-body",
@@ -66,8 +63,13 @@ app.get("/api/persons/:id", (req, res) => {
 
 app.delete("/api/persons/:id", (req, res) => {
   const id = req.params.id;
-  persons = persons.filter((p) => p.id !== id);
 
+  const toRemove = persons.find((p) => p.id === id);
+  if (!toRemove) {
+    res.status(404).end();
+  }
+
+  persons = persons.filter((p) => p.id !== id);
   res.status(204).end();
 });
 
@@ -94,9 +96,12 @@ app.post("/api/persons", (req, res) => {
   };
 
   persons = persons.concat(person);
-  res.json(persons);
+  res.json(person);
 });
 
+const unknownEndpoint = (req, res) => {
+  res.status(404).send({ error: "unknown endpoint" });
+};
 app.use(unknownEndpoint);
 
 const PORT = 3001;

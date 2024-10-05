@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "Phonebook application backend",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
@@ -11,6 +12,7 @@
   "author": "Yuri Hummel",
   "license": "MIT",
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "^4.21.0",
     "morgan": "^1.10.0"
   },

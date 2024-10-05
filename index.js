@@ -4,8 +4,9 @@ import cors from "cors";
 
 const app = express();
 
-app.use(express.json());
+app.use(express.static("dist"));
 app.use(cors());
+app.use(express.json());
 
 morgan.token("post-body", (req, resp) => {
   return JSON.stringify(req.body);

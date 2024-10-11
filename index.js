@@ -1,7 +1,9 @@
+import { config } from "dotenv";
 import express from "express";
 import morgan from "morgan";
 import cors from "cors";
 
+import Person from "./models/person.js";
 const app = express();
 
 app.use(express.static("dist"));
@@ -40,26 +42,16 @@ let persons = [
   },
 ];
 
-app.get("/info", (req, res) => {
-  const date = new Date();
-  res.send(
-    `<p>Phonebook has info for ${persons.length} people</p><p>${date}</p>`,
-  );
-});
-
 app.get("/api/persons", (req, res) => {
-  res.json(persons);
+  Person.find({}).then((people) => res.json(people));
 });
 
 app.get("/api/persons/:id", (req, res) => {
-  const id = req.params.id;
-  const person = persons.find((p) => p.id === id);
-
-  if (person) {
-    res.json(person);
-  } else {
-    res.status(404).end();
-  }
+  Person.findById(req.params.id)
+    .then((p) => res.json(p))
+    .catch((error) => {
+      res.status(404).end();
+    });
 });
 
 app.delete("/api/persons/:id", (req, res) => {

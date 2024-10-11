@@ -25,22 +25,27 @@ app.get("/api/persons", (req, res) => {
 
 app.get("/api/persons/:id", (req, res) => {
   Person.findById(req.params.id)
-    .then((p) => res.json(p))
+    .then((p) => {
+      if (p) {
+        res.json(p);
+      } else {
+        res.status(404).end();
+      }
+    })
     .catch((error) => {
-      res.status(404).end();
+      console.log(error);
+      res.status(400).send({ error: "malformatted id" });
     });
 });
 
 app.delete("/api/persons/:id", (req, res) => {
   const id = req.params.id;
-
-  const toRemove = persons.find((p) => p.id === id);
-  if (!toRemove) {
-    res.status(404).end();
-  }
-
-  persons = persons.filter((p) => p.id !== id);
-  res.status(204).end();
+  Person.findByIdAndDelete(id)
+    .then((result) => res.status(204).end())
+    .catch((error) => {
+      console.log(error);
+      res.status(500).end();
+    });
 });
 
 app.post("/api/persons", (req, res) => {

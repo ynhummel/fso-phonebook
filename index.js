@@ -19,6 +19,15 @@ app.use(
   ),
 );
 
+app.get("/info", (req, res) => {
+  const date = new Date();
+  Person.find({}).then((people) =>
+    res.send(
+      `<p>Phonebook has info for ${people.length} people</p><p>${date}</p>`,
+    ),
+  );
+});
+
 app.get("/api/persons", (req, res) => {
   Person.find({}).then((people) => res.json(people));
 });
